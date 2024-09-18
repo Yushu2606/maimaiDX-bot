@@ -1,0 +1,6 @@
+maimai/
+env/
+data/
+__pycache__/
+botpy.log
+config.toml
