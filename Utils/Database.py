@@ -9,10 +9,10 @@ class Database:
     def __enter__(self):
         return self
 
-    def set(self, key: str, value: any) -> None:
+    def set(self, key: str, value) -> None:
         self.db[key] = value
 
-    def get(self, key: str) -> any:
+    def get(self, key: str):
         return self.db.get(key)
 
     def dele(self, key: str) -> None:

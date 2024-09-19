@@ -10,7 +10,7 @@ from botpy.message import GroupMessage
 import maimai.Api
 from Utils.Database import Database
 from Utils.ScoreProcess import diving_fish_uploading, lxns_uploading
-
+from httpcore import ConnectTimeout
 
 @Commands("bind", "绑定", "绑")
 async def bind(api: BotAPI, message: GroupMessage, params: list[str] | None = None):
@@ -30,16 +30,17 @@ async def bind(api: BotAPI, message: GroupMessage, params: list[str] | None = No
     try:
         if datetime.now() - datetime.strptime(params[0][8:20], "%y%m%d%H%M%S") > timedelta(
                 minutes=10):
-            raise ValueError
+            await message.reply(content="过期的登入二维码")
+            return True
     except ValueError:
         await message.reply(content="无效的登入二维码")
         return True
 
     try:
         result = await maimai.Api.A(params[0])
-    except:
+    except ConnectTimeout:
         await message.reply(content="远端访问异常")
-        raise
+        return True
 
     if result["errorID"] != 0 or result["userID"] == -1:
         await message.reply(content="API异常")
@@ -101,9 +102,9 @@ async def pull(api: BotAPI, message: GroupMessage, params: None = None):
 
     try:
         result = await maimai.Api.B(uid)
-    except:
+    except ConnectTimeout:
         await message.reply(content="远端访问异常")
-        raise
+        return True
 
     tasks = []
     if dfid:
@@ -147,22 +148,20 @@ async def mai(api: BotAPI, message: GroupMessage, params: list[str] | None = Non
     with open("./data/map/mai_ver.json", "r", encoding="utf-8") as f:
         mai_ver: dict[str, list[str]] = json.load(f)
 
+    ver_name = params[0][0]
+    act_type = params[0][1:]
     if params[0] == "霸者":
-        await maimai.Api.C(uid, mai_ver["舞"], "清")
-        await message.reply(content="下埋完成")
-        return True
-
-    if params[0][0] not in mai_ver or params[0][1:] not in ["极", "将", "神", "舞舞"] or params[
-        0] == "真将":
-        print(params)
+        ver_name = "舞"
+        act_type = "清"
+    elif ver_name not in mai_ver or act_type not in ["极", "将", "神", "舞舞"] or params[0] == "真将":
         await message.reply(content="无效的牌子")
         return True
 
     try:
-        succeed, msg = await maimai.Api.C(uid, mai_ver[params[0][0]], params[0][1:])
-    except:
+        succeed, msg = await maimai.Api.C(uid, mai_ver[ver_name], act_type)
+    except ConnectTimeout:
         await message.reply(content="远端访问异常")
-        raise
+        return True
 
     if not succeed:
         await message.reply(content=f"下埋失败：{msg}")
