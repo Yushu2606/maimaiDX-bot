@@ -12,8 +12,11 @@ class Database:
     def set(self, key: str, value: any) -> None:
         self.db[key] = value
 
-    def get(self, key) -> any:
+    def get(self, key: str) -> any:
         return self.db.get(key)
+
+    def dele(self, key: str) -> None:
+        self.db.pop(key)
 
     def __exit__(self, atype, value, trace) -> None:
         self.db.close()

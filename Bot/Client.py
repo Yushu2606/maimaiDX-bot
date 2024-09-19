@@ -1,7 +1,8 @@
 import botpy
-from botpy.message import GroupMessage
 from botpy import logging
-from .Command import bind, binddf, bindlx, pull
+from botpy.message import GroupMessage
+
+from .Commands import bind, binddf, bindlx, pull
 
 
 class Client(botpy.Client):

@@ -1,5 +1,6 @@
-import tomlkit
 import botpy
+import tomlkit
+
 from Bot.Client import Client
 
 with open("config.toml", "r", encoding="utf-8") as f:

@@ -1,6 +1,7 @@
+from fractions import Fraction
+
 import aiohttp
 import tomlkit
-from fractions import Fraction
 
 
 def get_fc_or_fs(fc: int = 0, fs: int = 0):
@@ -20,7 +21,7 @@ def get_fc_or_fs_lx(fc: int = 0, fs: int = 0):
 async def generate_df_update_records(music_data: dict):
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            "https://www.diving-fish.com/api/maimaidxprober/music_data"
+                "https://www.diving-fish.com/api/maimaidxprober/music_data"
         ) as resp:
             resp.raise_for_status()
             total_list = await resp.json()
@@ -39,17 +40,17 @@ async def generate_df_update_records(music_data: dict):
             level_index = music_score["level"]
             fc, fs = get_fc_or_fs(music_score["comboStatus"], music_score["syncStatus"])
             achievements = Fraction(music_score["achievement"]) / Fraction(10000)
-            dxScore = music_score["deluxscoreMax"]
+            dx_score = music_score["deluxscoreMax"]
             title = music_detial["title"]
-            Musictype = music_detial["type"]
+            music_type = music_detial["type"]
             music_data = {
                 "achievements": achievements.numerator / achievements.denominator,
-                "dxScore": dxScore,
+                "dxScore": dx_score,
                 "fc": fc,
                 "fs": fs,
                 "level_index": level_index,
                 "title": title,
-                "type": Musictype,
+                "type": music_type,
             }
             update_music_data_list.append(music_data)
     return update_music_data_list
@@ -60,48 +61,48 @@ async def generate_lx_update_records(music_data: dict):
 
     for sig_music_list in music_data["userMusicList"]:
         for music_score in sig_music_list["userMusicDetailList"]:
-            id = music_score["musicId"]
+            music_id = music_score["musicId"]
             level_index = music_score["level"]
             fc, fs = get_fc_or_fs_lx(
                 music_score["comboStatus"], music_score["syncStatus"]
             )
             achievements = Fraction(music_score["achievement"]) / Fraction(10000)
-            dxScore = music_score["deluxscoreMax"]
+            dx_score = music_score["deluxscoreMax"]
             music_data = {
-                "id": id % 10000,
-                "type": "dx" if id / 10000 >= 1 else "standard",
+                "id": music_id % 10000,
+                "type": "dx" if music_id / 10000 >= 1 else "standard",
                 "level_index": level_index,
                 "achievements": achievements.numerator / achievements.denominator,
                 "fc": fc,
                 "fs": fs,
-                "dx_score": dxScore,
+                "dx_score": dx_score,
             }
             update_music_data_list.append(music_data)
     return update_music_data_list
 
 
-async def diving_fish_uploading(dfid, records):
+async def diving_fish_uploading(dfid: str, records: dict):
     try:
         update_music_data_list = await generate_df_update_records(records)
         async with aiohttp.ClientSession() as session:
             headers = {"Import-Token": dfid}
             async with session.post(
-                "https://www.diving-fish.com/api/maimaidxprober/player/update_records",
-                json=update_music_data_list,
-                headers=headers,
+                    "https://www.diving-fish.com/api/maimaidxprober/player/update_records",
+                    json=update_music_data_list,
+                    headers=headers,
             ) as resp:
                 resp.raise_for_status()
                 resp_obj = await resp.json()
     except:
-        return False, "水鱼API异常"
+        return False, "水鱼：API异常"
 
     if "status" in resp_obj and resp_obj["status"] != "error":
-        return False, resp_obj["message"]
+        return False, f"水鱼：{resp_obj["message"]}"
 
     return True, None
 
 
-async def lxns_uploading(lxid, records):
+async def lxns_uploading(lxid: str, records: dict):
     try:
         update_music_data_list = await generate_lx_update_records(records)
         async with aiohttp.ClientSession() as session:
@@ -109,16 +110,16 @@ async def lxns_uploading(lxid, records):
                 config = tomlkit.load(f)
             headers = {"Authorization": config["lx_dev_token"]}
             async with session.post(
-                f"https://maimai.lxns.net/api/v0/maimai/player/{lxid}/scores",
-                json={"scores": update_music_data_list},
-                headers=headers,
+                    f"https://maimai.lxns.net/api/v0/maimai/player/{lxid}/scores",
+                    json={"scores": update_music_data_list},
+                    headers=headers,
             ) as resp:
                 resp.raise_for_status()
                 resp_obj = await resp.json()
     except:
-        return False, "落雪API异常"
+        return False, "落雪：API异常"
 
     if not resp_obj["success"]:
-        return False, resp_obj["message"]
+        return False, f"落雪：{resp_obj["message"]}"
 
     return True, None

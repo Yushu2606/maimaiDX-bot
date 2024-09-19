@@ -1,7 +1,9 @@
 import asyncio
+
+from botpy import BotAPI
 from botpy.ext.command_util import Commands
 from botpy.message import GroupMessage
-from botpy import BotAPI
+
 import maimai.Api
 from Utils.Database import Database
 from Utils.ScoreProcess import diving_fish_uploading, lxns_uploading
@@ -85,14 +87,13 @@ async def pull(api: BotAPI, message: GroupMessage, params=None):
         tasks.append(lxns_uploading(lxid, result))
 
     results = await asyncio.gather(*tasks)
-    succeed = False
+    msgs = []
     for _, result in enumerate(results):
         if result[0]:
-            succeed = True
+            await message.reply(content="成绩推送完成")
+            return True
+        if result[1] is not None:
+            msgs.append(result[1])
 
-    if not succeed:
-        await message.reply(content="成绩推送失败")
-        return True
-
-    await message.reply(content="成绩推送完成")
+    await message.reply(content=f"成绩推送失败：\r\n{"\r\n".join(msgs)}")
     return True
