@@ -2,6 +2,7 @@ maimai/
 env/
 data/
 __pycache__/
+.idea/
+.mypy_cache/
 botpy.log
 config.toml
-.idea

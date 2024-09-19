@@ -2,7 +2,7 @@ import botpy
 from botpy import logging
 from botpy.message import GroupMessage
 
-from .Commands import bind, binddf, bindlx, pull
+from .Commands import bind, binddf, bindlx, pull, mai
 
 
 class Client(botpy.Client):
@@ -16,7 +16,12 @@ class Client(botpy.Client):
             binddf,
             bindlx,
             pull,
+            mai
         ]
         for handler in handlers:
-            if await handler(api=self.api, message=message):
-                break
+            try:
+                if await handler(api=self.api, message=message):
+                    break
+            except:
+                await message.reply(content="失败！")
+                raise

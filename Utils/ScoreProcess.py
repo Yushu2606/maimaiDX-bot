@@ -114,7 +114,6 @@ async def lxns_uploading(lxid: str, records: dict):
                     json={"scores": update_music_data_list},
                     headers=headers,
             ) as resp:
-                resp.raise_for_status()
                 resp_obj = await resp.json()
     except:
         return False, "落雪：API异常"
