@@ -4,7 +4,7 @@ import re
 from datetime import datetime, timedelta
 
 from botpy import BotAPI
-from botpy.ext.command_util import Commands
+from Utils.command_util import Commands
 from botpy.message import GroupMessage
 
 import maimai.Api
@@ -39,6 +39,9 @@ async def bind(api: BotAPI, message: GroupMessage, params: list[str] | None = No
     try:
         result = await maimai.Api.A(params[0])
     except ConnectTimeout:
+        await message.reply(content="远端访问超时")
+        return True
+    except ValueError:
         await message.reply(content="远端访问异常")
         return True
 
@@ -103,6 +106,9 @@ async def pull(api: BotAPI, message: GroupMessage, params: None = None):
     try:
         result = await maimai.Api.B(uid)
     except ConnectTimeout:
+        await message.reply(content="远端访问超时")
+        return True
+    except ValueError:
         await message.reply(content="远端访问异常")
         return True
 
@@ -129,7 +135,7 @@ async def pull(api: BotAPI, message: GroupMessage, params: None = None):
     return True
 
 
-@Commands("埋", "下埋")
+@Commands("mai", "埋", "下埋")
 async def mai(api: BotAPI, message: GroupMessage, params: list[str] | None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
@@ -160,16 +166,38 @@ async def mai(api: BotAPI, message: GroupMessage, params: list[str] | None = Non
     try:
         succeed, msg = await maimai.Api.C(uid, mai_ver[ver_name], act_type)
     except ConnectTimeout:
+        await message.reply(content="远端访问超时")
+        return True
+    except ValueError:
         await message.reply(content="远端访问异常")
         return True
 
     if not succeed:
-        await message.reply(content=f"下埋失败：{msg}")
+        await message.reply(content=f"任务提交失败：{msg}")
         return True
 
-    if msg <= 0:
-        await message.reply(content="不需要下埋")
+    queues = [k for (k, v) in maimai.Api.queues.items() if type(v) is list]
+    await message.reply(content=f"已提交至任务队列，{f"您位于第{len(queues)}位" if len(queues) > 1 else "下埋中"}")
+    return True
+
+
+@Commands("query", "查询进度", "查进度")
+async def query(api: BotAPI, message: GroupMessage, params: None = None):
+    with Database("uid") as db:
+        uid = db.get(message.author.member_openid)
+    if not uid:
+        await message.reply(content="尚未绑定舞萌中二账号")
         return True
 
-    await message.reply(content=f"下埋完成，已埋{msg}个谱面")
+    if uid not in maimai.Api.queues:
+        await message.reply(content="队列中尚无任务")
+        return True
+
+    if type(maimai.Api.queues[uid]) is str:
+        await message.reply(content=f"任务被中断：{maimai.Api.queues[uid]}")
+        del maimai.Api.queues[uid]
+        return True
+
+    queues = [k for (k, v) in maimai.Api.queues.items() if type(v) is list]
+    await message.reply(content=f"任务剩余{len(maimai.Api.queues[uid])}，{"进行中" if queues[0] == uid else f"，等待中，位于第{queues.index(uid)}位"}")
     return True
