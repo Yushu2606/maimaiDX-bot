@@ -19,7 +19,7 @@ class Commands:
             message: BaseMessage = kwargs["message"]
             params = message.content.split()
             for command in self.commands:
-                if f"/{command}" == params[0]:
+                if len(params) > 0 and f"/{command}" == params[0]:
                     params = params[1:] if len(params) > 1 else None
                     kwargs["params"] = params
                     return await func(*args, **kwargs)

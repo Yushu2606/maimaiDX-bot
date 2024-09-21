@@ -4,7 +4,7 @@ import shelve
 class Database:
     def __init__(self, name: str):
         self.name = name
-        self.db = shelve.open(f"./data/{self.name}")
+        self.db = shelve.open(f"./data/{self.name}.db")
 
     def __enter__(self):
         return self

@@ -199,5 +199,5 @@ async def query(api: BotAPI, message: GroupMessage, params: None = None):
         return True
 
     queues = [k for (k, v) in maimai.api.queues.items() if type(v) is list]
-    await message.reply(content=f"任务剩余{len(maimai.api.queues[uid])}，{"进行中" if queues[0] == uid else f"，等待中，位于第{queues.index(uid)}位"}")
+    await message.reply(content=f"任务剩余{len(maimai.api.queues[uid])}，{"进行中" if queues[0] == uid else f"等待中，位于第{queues.index(uid) + 1}位"}")
     return True
