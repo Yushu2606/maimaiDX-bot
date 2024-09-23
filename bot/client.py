@@ -1,10 +1,11 @@
 import asyncio
+
 import botpy
 from botpy import logging
 from botpy.message import GroupMessage
 
 import maimai.api
-from bot.commands import bind, binddf, bindlx, pull, mai, query
+from bot.commands import bind, binddf, bindlx, pull, mai, query, brea, sche
 
 
 class Client(botpy.Client):
@@ -15,7 +16,7 @@ class Client(botpy.Client):
         _log.info("初始化完毕")
 
     async def on_group_at_message_create(self, message: GroupMessage):
-        handlers = [bind, binddf, bindlx, pull, mai, query]
+        handlers = [bind, binddf, bindlx, pull, mai, query, brea, sche]
         for handler in handlers:
             try:
                 if await handler(api=self.api, message=message):

@@ -1,4 +1,5 @@
 from functools import wraps
+
 from botpy.message import BaseMessage
 
 
@@ -20,6 +21,7 @@ class Commands:
             params = message.content.split()
             for command in self.commands:
                 if len(params) > 0 and f"/{command}" == params[0]:
+                    kwargs["command"] = command
                     params = params[1:] if len(params) > 1 else None
                     kwargs["params"] = params
                     return await func(*args, **kwargs)
