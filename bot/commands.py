@@ -18,14 +18,11 @@ from utils.score_process import diving_fish_uploading, lxns_uploading
 async def bind(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     if params is None:
         await message.reply(
-            content=f"请在命令后附带有效登入二维码内容\r\n例：/{command} SGWCMAID000..."
-        )
+            content=f"请在命令后附带有效登入二维码内容\r\n例：/{command} SGWCMAID000...")
         return True
 
     if len(params) != 1 or len(params[0]) != 84 or not params[0].startswith("SGWCMAID") or re.match(
-            "^[0-9A-F]+$",
-            params[0][
-            20:]) is None:
+            "^[0-9A-F]+$", params[0][20:]) is None:
         await message.reply(content="无效的登入二维码")
         return True
 

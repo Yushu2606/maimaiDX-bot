@@ -20,9 +20,7 @@ def get_fc_or_fs_lx(fc: int = 0, fs: int = 0):
 
 async def generate_df_update_records(music_data: dict):
     async with aiohttp.ClientSession() as session:
-        async with session.get(
-                "https://www.diving-fish.com/api/maimaidxprober/music_data"
-        ) as resp:
+        async with session.get("https://www.diving-fish.com/api/maimaidxprober/music_data") as resp:
             resp.raise_for_status()
             total_list = await resp.json()
 
@@ -63,9 +61,7 @@ async def generate_lx_update_records(music_data: dict):
         for music_score in sig_music_list["userMusicDetailList"]:
             music_id = music_score["musicId"]
             level_index = music_score["level"]
-            fc, fs = get_fc_or_fs_lx(
-                music_score["comboStatus"], music_score["syncStatus"]
-            )
+            fc, fs = get_fc_or_fs_lx(music_score["comboStatus"], music_score["syncStatus"])
             achievements = Fraction(music_score["achievement"]) / Fraction(10000)
             dx_score = music_score["deluxscoreMax"]
             music_data = {
@@ -88,9 +84,7 @@ async def diving_fish_uploading(dfid: str, records: dict):
             headers = {"Import-Token": dfid}
             async with session.post(
                     "https://www.diving-fish.com/api/maimaidxprober/player/update_records",
-                    json=update_music_data_list,
-                    headers=headers,
-            ) as resp:
+                    json=update_music_data_list, headers=headers) as resp:
                 resp.raise_for_status()
                 resp_obj = await resp.json()
     except:
@@ -109,11 +103,9 @@ async def lxns_uploading(lxid: str, records: dict):
             with open("config.toml", "r", encoding="utf-8") as f:
                 config = tomlkit.load(f)
             headers = {"Authorization": config["lx_dev_token"]}
-            async with session.post(
-                    f"https://maimai.lxns.net/api/v0/maimai/player/{lxid}/scores",
-                    json={"scores": update_music_data_list},
-                    headers=headers,
-            ) as resp:
+            async with session.post(f"https://maimai.lxns.net/api/v0/maimai/player/{lxid}/scores",
+                                    json={"scores": update_music_data_list},
+                                    headers=headers) as resp:
                 resp_obj = await resp.json()
     except:
         return False, "落雪：API异常"
