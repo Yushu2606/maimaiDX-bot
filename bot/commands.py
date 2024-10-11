@@ -131,10 +131,10 @@ async def sync(api: BotAPI, message: GroupMessage, command: str, params: None = 
         msgs.append(result[1])
 
     if len(msgs) <= 0:
-        await message.reply(content="成绩推送成功")
+        await message.reply(content="成绩同步成功")
         return True
 
-    await message.reply(content=f"成绩推送失败：\r\n{"\r\n".join(msgs)}")
+    await message.reply(content="\r\n".join(msgs))
     return True
 
 
@@ -177,7 +177,7 @@ async def mai(api: BotAPI, message: GroupMessage, command: str, params: list[str
         return True
 
     if not succeed:
-        await message.reply(content=f"任务提交失败：{msg}")
+        await message.reply(content=msg)
         return True
 
     queues = [k for (k, v) in maimai.api.queues.items() if type(v) is list]
@@ -199,7 +199,7 @@ async def query(api: BotAPI, message: GroupMessage, command: str, params: None =
         return True
 
     if type(maimai.api.queues[uid]) is str:
-        await message.reply(content=f"任务被中断：{maimai.api.queues[uid]}")
+        await message.reply(content=maimai.api.queues[uid])
         del maimai.api.queues[uid]
         return True
 
