@@ -14,7 +14,7 @@ from utils.database import Database
 from utils.score_process import diving_fish_uploading, lxns_uploading
 
 
-@Commands("bind", "绑定", "绑")
+@Commands("bindmai", "bind", "绑定舞萌", "绑舞萌", "绑定", "绑")
 async def bind(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     if params is None:
         await message.reply(
@@ -90,8 +90,8 @@ async def bindlx(api: BotAPI, message: GroupMessage, command: str, params: list[
     return True
 
 
-@Commands("pull", "爬取", "拉取", "推送", "推")
-async def pull(api: BotAPI, message: GroupMessage, command: str, params: None = None):
+@Commands("sync", "同步成绩", "同步")
+async def sync(api: BotAPI, message: GroupMessage, command: str, params: None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
     if not uid:
@@ -138,7 +138,7 @@ async def pull(api: BotAPI, message: GroupMessage, command: str, params: None = 
     return True
 
 
-@Commands("mai", "埋", "下埋")
+@Commands("xiamai", "mai", "下埋", "埋")
 async def mai(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
@@ -209,7 +209,7 @@ async def query(api: BotAPI, message: GroupMessage, command: str, params: None =
     return True
 
 
-@Commands("break", "中断", "打断", "停埋")
+@Commands("break", "stop", "中断下埋", "打断下埋", "停止下埋", "停埋")
 async def brea(api: BotAPI, message: GroupMessage, command: str, params: None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
@@ -226,7 +226,7 @@ async def brea(api: BotAPI, message: GroupMessage, command: str, params: None = 
     return True
 
 
-@Commands("sche", "定时", "定时拉取", "定时推送", "定时拉", "定时推")
+@Commands("sche", "auto", "定时同步", "定期同步", "自动同步")
 async def sche(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     if params is None:
         await message.reply(content=f"请在命令后附带合法表达式\r\n例：/{command} 0 0/8")
