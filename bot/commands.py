@@ -167,6 +167,9 @@ async def mai(api: BotAPI, message: GroupMessage, command: str, params: list[str
         await message.reply(content="无效的牌子")
         return True
 
+    if uid in maimai.api.queues and type(maimai.api.queues[uid]) is list:
+        return False, "队列中已有一个任务"
+
     try:
         succeed, msg = await maimai.api.C(uid, mai_ver[ver_name], act_type)
     except ConnectTimeout:
@@ -237,3 +240,28 @@ async def sche(api: BotAPI, message: GroupMessage, command: str, params: list[st
         return True
 
     raise NotImplementedError
+
+
+@Commands("unlock", "解歌", "解谱面", "解锁歌曲", "解锁谱面")
+async def unlock(api: BotAPI, message: GroupMessage, command: str, params: None = None):
+    with Database("uid") as db:
+        uid = db.get(message.author.member_openid)
+    if not uid:
+        await message.reply(content="尚未绑定舞萌中二账号")
+        return True
+
+    try:
+        succeed, msg = await maimai.api.E(uid)
+    except ConnectTimeout:
+        await message.reply(content="远端访问超时")
+        return True
+    except ValueError:
+        await message.reply(content="远端访问异常")
+        return True
+
+    if not succeed:
+        await message.reply(content=msg)
+        return True
+
+    await message.reply(content="铺面解锁成功")
+    return True
