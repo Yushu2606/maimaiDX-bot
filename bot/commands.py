@@ -243,15 +243,23 @@ async def sche(api: BotAPI, message: GroupMessage, command: str, params: list[st
 
 
 @Commands("unlock", "解歌", "解谱面", "解锁歌曲", "解锁谱面")
-async def unlock(api: BotAPI, message: GroupMessage, command: str, params: None = None):
+async def unlock(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
     if not uid:
         await message.reply(content="尚未绑定舞萌中二账号")
         return True
 
+    songid: list[int] = []
+    if params:
+        for i in params:
+            if not i.isdigit() or int(i) > 99999 or int(i) < 1000:
+                return await message.reply(content=f"{i}无效")
+
+            songid.append(int(i))
+
     try:
-        succeed, msg = await maimai.api.E(uid)
+        succeed, msg = await maimai.api.E(uid, songid)
     except ConnectTimeout:
         await message.reply(content="远端访问超时")
         return True
