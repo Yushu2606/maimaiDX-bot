@@ -254,7 +254,8 @@ async def unlock(api: BotAPI, message: GroupMessage, command: str, params: list[
     if params:
         for i in params:
             if not i.isdigit() or int(i) > 99999 or int(i) < 1000:
-                return await message.reply(content=f"{i}无效")
+                await message.reply(content=f"{i}无效")
+                return True
 
             songid.append(int(i))
 
@@ -271,5 +272,5 @@ async def unlock(api: BotAPI, message: GroupMessage, command: str, params: list[
         await message.reply(content=msg)
         return True
 
-    await message.reply(content="铺面解锁成功")
+    await message.reply(content="谱面解锁成功")
     return True
