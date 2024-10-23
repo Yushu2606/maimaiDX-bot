@@ -14,7 +14,7 @@ from utils.database import Database
 from utils.score_process import diving_fish_uploading, lxns_uploading
 
 
-@Commands("bindmai", "bind", "绑定舞萌", "绑舞萌", "绑定", "绑")
+@Commands("绑定舞萌", "绑舞萌", "绑定", "绑")
 async def bind(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     if params is None:
         await message.reply(
@@ -58,7 +58,7 @@ async def bind(api: BotAPI, message: GroupMessage, command: str, params: list[st
     return True
 
 
-@Commands("binddf", "绑定水鱼", "绑水鱼")
+@Commands("绑定水鱼", "绑水鱼")
 async def binddf(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     if params is None:
         await message.reply(content=f"请在命令后附带水鱼上传Token\r\n例：/{command} 000...")
@@ -74,7 +74,7 @@ async def binddf(api: BotAPI, message: GroupMessage, command: str, params: list[
     return True
 
 
-@Commands("bindlx", "绑定落雪", "绑落雪")
+@Commands("绑定落雪", "绑落雪")
 async def bindlx(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     if params is None:
         await message.reply(content=f"请在命令后附带好友码\r\n例：/{command} 000...")
@@ -90,7 +90,7 @@ async def bindlx(api: BotAPI, message: GroupMessage, command: str, params: list[
     return True
 
 
-@Commands("sync", "同步成绩", "同步")
+@Commands("同步成绩", "同步")
 async def sync(api: BotAPI, message: GroupMessage, command: str, params: None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
@@ -138,7 +138,7 @@ async def sync(api: BotAPI, message: GroupMessage, command: str, params: None = 
     return True
 
 
-@Commands("xiamai", "mai", "下埋", "埋")
+@Commands("下埋", "埋")
 async def mai(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
@@ -189,7 +189,7 @@ async def mai(api: BotAPI, message: GroupMessage, command: str, params: list[str
     return True
 
 
-@Commands("query", "查询进度", "查进度")
+@Commands("查询进度", "查询任务", "查询进度", "查任务")
 async def query(api: BotAPI, message: GroupMessage, command: str, params: None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
@@ -212,7 +212,7 @@ async def query(api: BotAPI, message: GroupMessage, command: str, params: None =
     return True
 
 
-@Commands("break", "stop", "中断下埋", "打断下埋", "停止下埋", "停埋")
+@Commands("终止任务", "中止任务", "中断任务", "打断任务", "停止任务")
 async def brea(api: BotAPI, message: GroupMessage, command: str, params: None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
@@ -225,11 +225,11 @@ async def brea(api: BotAPI, message: GroupMessage, command: str, params: None = 
         return True
 
     maimai.api.queues[uid].clear()
-    await message.reply(content="任务已中断")
+    await message.reply(content="任务已终止")
     return True
 
 
-@Commands("sche", "auto", "定时同步", "定期同步", "自动同步")
+@Commands("设置定时同步", "设置定期同步", "设置自动同步", "设置定时")
 async def sche(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     if params is None:
         await message.reply(content=f"请在命令后附带合法表达式\r\n例：/{command} 0 0/8")
@@ -242,7 +242,7 @@ async def sche(api: BotAPI, message: GroupMessage, command: str, params: list[st
     raise NotImplementedError
 
 
-@Commands("unlock", "解歌", "解谱面", "解锁歌曲", "解锁谱面")
+@Commands("解歌", "解锁歌曲", "解锁谱面")
 async def unlock(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
