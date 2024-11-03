@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from botpy import BotAPI
 from botpy.message import GroupMessage
 from croniter.croniter import croniter
-from httpcore import ConnectTimeout
+from httpx import ConnectError, ProxyError
 
 import maimai.api
 from utils.command_util import Commands
@@ -37,12 +37,15 @@ async def bind(api: BotAPI, message: GroupMessage, command: str, params: list[st
 
     try:
         result = await maimai.api.A(params[0])
-    except ConnectTimeout:
-        await message.reply(content="远端访问超时")
-        return True
     except ValueError:
         await message.reply(content="远端访问异常")
         return True
+    except ConnectError:
+        await message.reply(content="代理异常")
+        raise
+    except ProxyError:
+        await message.reply(content="代理异常")
+        raise
 
     if result["errorID"] != 0 or result["userID"] == -1:
         await message.reply(content="API异常")
@@ -108,12 +111,15 @@ async def sync(api: BotAPI, message: GroupMessage, command: str, params: None = 
 
     try:
         result = await maimai.api.B(uid)
-    except ConnectTimeout:
-        await message.reply(content="远端访问超时")
-        return True
     except ValueError:
         await message.reply(content="远端访问异常")
         return True
+    except ConnectError:
+        await message.reply(content="代理异常")
+        raise
+    except ProxyError:
+        await message.reply(content="代理异常")
+        raise
 
     tasks = []
     if dfid:
@@ -168,16 +174,20 @@ async def mai(api: BotAPI, message: GroupMessage, command: str, params: list[str
         return True
 
     if uid in maimai.api.queues and type(maimai.api.queues[uid]) is list:
-        return False, "队列中已有一个任务"
+        await message.reply(content="队列中已有一个任务")
+        return True
 
     try:
         succeed, msg = await maimai.api.C(uid, mai_ver[ver_name], act_type)
-    except ConnectTimeout:
-        await message.reply(content="远端访问超时")
-        return True
     except ValueError:
         await message.reply(content="远端访问异常")
         return True
+    except ConnectError:
+        await message.reply(content="代理异常")
+        raise
+    except ProxyError:
+        await message.reply(content="代理异常")
+        raise
 
     if not succeed:
         await message.reply(content=msg)
@@ -261,12 +271,15 @@ async def unlock(api: BotAPI, message: GroupMessage, command: str, params: list[
 
     try:
         succeed, msg = await maimai.api.E(uid, songid)
-    except ConnectTimeout:
-        await message.reply(content="远端访问超时")
-        return True
     except ValueError:
         await message.reply(content="远端访问异常")
         return True
+    except ConnectError:
+        await message.reply(content="代理异常")
+        raise
+    except ProxyError:
+        await message.reply(content="代理异常")
+        raise
 
     if not succeed:
         await message.reply(content=msg)
