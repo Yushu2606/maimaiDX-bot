@@ -43,7 +43,7 @@ async def bind(
         await message.reply(content="无效的登入二维码")
         return True
 
-    if 4 < datetime.now().hour < 7:
+    if 4 <= datetime.now().hour <= 7:
         await message.reply(content="舞萌服务器维护中")
         return True
 
@@ -131,7 +131,7 @@ async def sync(api: BotAPI, message: GroupMessage, command: str, params: None = 
         await message.reply(content="尚未绑定任一查分器")
         return True
 
-    if 4 < datetime.now().hour < 7:
+    if 4 <= datetime.now().hour <= 7:
         await message.reply(content="舞萌服务器维护中")
         return True
 
@@ -207,7 +207,7 @@ async def mai(
         await message.reply(content="队列中已有一个任务")
         return True
 
-    if 4 < datetime.now().hour < 7:
+    if 4 <= datetime.now().hour <= 7:
         await message.reply(content="舞萌服务器维护中")
         return True
 
@@ -308,7 +308,7 @@ async def unlock(
 
             songid.append(int(i))
 
-    if 4 < datetime.now().hour < 7:
+    if 4 <= datetime.now().hour <= 7:
         await message.reply(content="舞萌服务器维护中")
         return True
 
