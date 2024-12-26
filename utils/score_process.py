@@ -4,18 +4,11 @@ import aiohttp
 import tomlkit
 
 
-def get_fc_or_fs(fc: int = 0, fs: int = 0):
-    fc_enums = {0: "", 1: "fc", 2: "fcp", 3: "ap", 4: "app"}
+def get_fc_or_fs(fc: int = 0, fs: int = 0, default_value=None):
+    fc_enums = {0: default_value, 1: "fc", 2: "fcp", 3: "ap", 4: "app"}
 
-    fs_enums = {0: "", 1: "fs", 2: "fsp", 3: "fsd", 4: "fsdp", 5: "sp"}
-    return fc_enums.get(fc, ""), fs_enums.get(fs, "")
-
-
-def get_fc_or_fs_lx(fc: int = 0, fs: int = 0):
-    fc_enums = {0: None, 1: "fc", 2: "fcp", 3: "ap", 4: "app"}
-
-    fs_enums = {0: None, 1: "fs", 2: "fsp", 3: "fsd", 4: "fsdp", 5: "sync"}
-    return fc_enums.get(fc, None), fs_enums.get(fs, None)
+    fs_enums = {0: default_value, 1: "fs", 2: "fsp", 3: "fsd", 4: "fsdp", 5: "sync"}
+    return fc_enums.get(fc, default_value), fs_enums.get(fs, default_value)
 
 
 async def generate_df_update_records(music_data: dict):
@@ -36,7 +29,7 @@ async def generate_df_update_records(music_data: dict):
             continue
         for music_score in sig_music_list["userMusicDetailList"]:
             level_index = music_score["level"]
-            fc, fs = get_fc_or_fs(music_score["comboStatus"], music_score["syncStatus"])
+            fc, fs = get_fc_or_fs(music_score["comboStatus"], music_score["syncStatus"], "")
             achievements = Fraction(music_score["achievement"]) / Fraction(10000)
             dx_score = music_score["deluxscoreMax"]
             title = music_detial["title"]
@@ -61,7 +54,7 @@ async def generate_lx_update_records(music_data: dict):
         for music_score in sig_music_list["userMusicDetailList"]:
             music_id = music_score["musicId"]
             level_index = music_score["level"]
-            fc, fs = get_fc_or_fs_lx(music_score["comboStatus"], music_score["syncStatus"])
+            fc, fs = get_fc_or_fs(music_score["comboStatus"], music_score["syncStatus"])
             achievements = Fraction(music_score["achievement"]) / Fraction(10000)
             dx_score = music_score["deluxscoreMax"]
             music_data = {
