@@ -257,7 +257,7 @@ async def query(api: BotAPI, message: GroupMessage, command: str, params: None =
     return True
 
 
-@Commands("终止任务", "中止任务", "中断任务", "打断任务", "停止任务")
+@Commands("终止任务", "中止任务", "中断任务", "打断任务", "停止任务", "取消任务")
 async def brea(api: BotAPI, message: GroupMessage, command: str, params: None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
@@ -289,7 +289,7 @@ async def sche(
     raise NotImplementedError
 
 
-@Commands("解歌", "解锁歌曲", "解锁谱面")
+@Commands("解歌", "全解", "解锁歌曲", "解锁谱面", "解锁全曲", "解锁全部", "解锁所有")
 async def unlock(
     api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None
 ):
