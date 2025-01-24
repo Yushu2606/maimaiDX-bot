@@ -115,7 +115,7 @@ async def bindlx(
     return True
 
 
-@Commands("同步成绩", "同步")
+@Commands("同步成绩", "同步", "导")
 async def sync(api: BotAPI, message: GroupMessage, command: str, params: None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
