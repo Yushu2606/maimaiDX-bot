@@ -97,10 +97,10 @@ async def generate_lx_update_records(music_data: dict):
 
 
 async def diving_fish_uploading(dfid: str, records: dict):
-    try:
-        update_music_data_list = await generate_df_update_records(records)
-        async with aiohttp.ClientSession() as session:
-            headers = {"Import-Token": dfid}
+    update_music_data_list = await generate_df_update_records(records)
+    headers = {"Import-Token": dfid}
+    async with aiohttp.ClientSession() as session:
+        try:
             async with session.post(
                 "https://www.diving-fish.com/api/maimaidxprober/player/update_records",
                 json=update_music_data_list,
@@ -108,8 +108,8 @@ async def diving_fish_uploading(dfid: str, records: dict):
             ) as resp:
                 resp.raise_for_status()
                 resp_obj = await resp.json()
-    except:
-        return False, "水鱼：API异常"
+        except:
+            return False, "水鱼：API异常"
 
     if "status" in resp_obj and resp_obj["status"] != "error":
         return False, f"水鱼：{resp_obj["message"]}"
@@ -118,21 +118,20 @@ async def diving_fish_uploading(dfid: str, records: dict):
 
 
 async def lxns_uploading(lxid: str, records: dict):
-    try:
-        update_music_data_list = await generate_lx_update_records(records)
+    update_music_data_list = await generate_lx_update_records(records)
+    with open("config.toml", "r", encoding="utf-8") as f:
+        config = tomlkit.load(f)
+        headers = {"Authorization": config["lx_dev_token"]}
         async with aiohttp.ClientSession() as session:
-            with open("config.toml", "r", encoding="utf-8") as f:
-                config = tomlkit.load(f)
-
-            headers = {"Authorization": config["lx_dev_token"]}
-            async with session.post(
-                f"https://maimai.lxns.net/api/v0/maimai/player/{lxid}/scores",
-                json={"scores": update_music_data_list},
-                headers=headers,
-            ) as resp:
-                resp_obj = await resp.json()
-    except:
-        return False, "落雪：API异常"
+            try:
+                async with session.post(
+                    f"https://maimai.lxns.net/api/v0/maimai/player/{lxid}/scores",
+                    json={"scores": update_music_data_list},
+                    headers=headers,
+                ) as resp:
+                    resp_obj = await resp.json()
+            except:
+                return False, "落雪：API异常"
 
     if not resp_obj["success"]:
         return False, f"落雪：{resp_obj["message"]}"
