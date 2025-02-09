@@ -75,7 +75,8 @@ async def generate_lx_update_records(music_data: dict):
             if not [
                 None
                 for song in total_list["songs"]
-                if song["id"] == music_id and len(song[music_type]) > level_index
+                if song["id"] == music_id
+                and len(song["difficulties"][music_type]) > level_index
             ]:
                 continue
 
