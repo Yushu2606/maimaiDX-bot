@@ -69,13 +69,13 @@ async def generate_lx_update_records(music_data: dict):
 
     for sig_music_list in music_data["userMusicList"]:
         for music_score in sig_music_list["userMusicDetailList"]:
-            music_id = music_score["musicId"]
+            music_id = music_score["musicId"] % 10000
+            music_type = "dx" if music_score["musicId"] >= 10000 else "standard"
             level_index = music_score["level"]
             if not [
                 None
                 for song in total_list["songs"]
-                if song["id"] == music_id
-                and len(song["dx" if music_id >= 10000 else "standard"]) > level_index
+                if song["id"] == music_id and len(song[music_type]) > level_index
             ]:
                 continue
 
@@ -83,8 +83,8 @@ async def generate_lx_update_records(music_data: dict):
             achievements = Fraction(music_score["achievement"]) / Fraction(10000)
             dx_score = music_score["deluxscoreMax"]
             music_data = {
-                "id": music_id % 10000,
-                "type": "dx" if music_id >= 10000 else "standard",
+                "id": music_id,
+                "type": music_type,
                 "level_index": level_index,
                 "achievements": achievements.numerator / achievements.denominator,
                 "fc": fc,
