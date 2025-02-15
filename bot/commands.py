@@ -327,3 +327,30 @@ async def unlock(
 
     await message.reply(content="谱面解锁成功")
     return True
+
+
+@Commands("账号状态", "账户状态", "状态")
+async def state(api: BotAPI, message: GroupMessage, command: str, params: None = None):
+    with Database("uid") as db:
+        uid = db.get(message.author.member_openid)
+    if not uid:
+        await message.reply(content="尚未绑定舞萌中二账号")
+        return True
+
+    if 4 <= datetime.now().hour <= 7:
+        await message.reply(content="舞萌服务器维护中")
+        return True
+
+    try:
+        result = await maimai.api.F(uid)
+    except ValueError:
+        await message.reply(content="API异常")
+        return True
+    except ConnectError:
+        await message.reply(content="远端访问异常")
+        raise
+
+    await message.reply(
+        content=f"在线状态：{"在线" if result["isLogin"] else "离线"}\r\n账号状态：{"正常" if result["banState"] == 0 else f"异常（{result["banState"]}）"}"
+    )
+    return True
