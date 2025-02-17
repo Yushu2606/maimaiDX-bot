@@ -79,7 +79,7 @@ async def binddf(
 ):
     if params is None:
         await message.reply(
-            content=f"请在命令后附带水鱼上传Token\r\n例：/{command} 000..."
+            content=f"请在命令后附带水鱼查分器导入Token\r\n例：/{command} 000..."
         )
         return True
 
@@ -88,12 +88,12 @@ async def binddf(
         or len(params[0]) != 128
         or re.match("^[0-9A-Za-z]+$", params[0]) is None
     ):
-        await message.reply(content="无效的水鱼上传Token")
+        await message.reply(content="无效的水鱼查分器导入Token")
         return True
 
     with Database("dfid") as db:
         db.set(message.author.member_openid, params[0])
-    await message.reply(content="水鱼上传Token绑定成功")
+    await message.reply(content="水鱼查分器导入Token绑定成功")
     return True
 
 
@@ -102,7 +102,7 @@ async def bindlx(
     api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None
 ):
     if params is None:
-        await message.reply(content=f"请在命令后附带好友码\r\n例：/{command} 000...")
+        await message.reply(content=f"请在命令后附带好友码或落雪查分器个人Token\r\n例：/{command} 000...")
         return True
 
     if len(params) != 1 or len(params[0]) != 15 or not params[0].isdigit():
