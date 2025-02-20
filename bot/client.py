@@ -31,10 +31,12 @@ class Client(botpy.Client):
         for handler in handlers:
             try:
                 if await handler(api=self.api, message=message):
-                    break
+                    return
             except:
                 try:
                     await message.reply(content="失败！")
                 except:
                     pass
                 raise
+
+        await message.reply(content=f"无效的命令")

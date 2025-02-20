@@ -20,7 +20,7 @@ async def bind(
 ):
     if params is None:
         await message.reply(
-            content=f"请在命令后附带有效登入二维码内容\r\n例：/{command} SGWCMAID000..."
+            content=f"请在命令后附带有效的登入二维码内容\r\n例：/{command} SGWCMAID000..."
         )
         return True
 
@@ -303,7 +303,7 @@ async def unlock(
     if params:
         for i in params:
             if not i.isdigit() or int(i) > 99999 or int(i) < 1000:
-                await message.reply(content=f"{i}无效")
+                await message.reply(content="无效的乐曲ID")
                 return True
 
             songid.append(int(i))
