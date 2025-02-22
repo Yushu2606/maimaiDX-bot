@@ -116,7 +116,7 @@ async def bindlx(
 
 
 @Commands("同步成绩", "同步", "导")
-async def sync(api: BotAPI, message: GroupMessage, command: str, params: None = None):
+async def sync(api: BotAPI, message: GroupMessage, command: str, params: list[str] | None = None):
     with Database("uid") as db:
         uid = db.get(message.author.member_openid)
     if not uid:
@@ -160,6 +160,10 @@ async def sync(api: BotAPI, message: GroupMessage, command: str, params: None = 
         msgs.append(result[1])
 
     if len(msgs) <= 0:
+        if params and len(params) > 0 and "b50" in params:
+            await message.reply(content="dlx50")
+            return True
+
         await message.reply(content="成绩同步成功")
         return True
 
